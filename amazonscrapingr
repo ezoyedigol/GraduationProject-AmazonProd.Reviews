@@ -1,0 +1,80 @@
+library(rvest)
+library(ggplot2)
+library(tidytext)
+library(tm)
+
+# Amazon ürün sayfasının URL'si
+url <- "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews"
+
+# Sayfanın HTML içeriği
+web_page <- read_html(url)
+
+# Yorumların bulunduğu HTML etiketinin XPath'i 
+review_xpath <- '//*[contains(concat( " ", @class, " " ), concat( " ", "review-text-content", " " ))]//span'
+
+# Yorumları içeren HTML etiketleri
+reviews <- web_page %>% html_nodes(xpath = review_xpath) %>% html_text()
+
+
+# İlk sayfa URL'si
+url_page1 <- "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_dp_d_paging_btm_next_1?ie=UTF8&reviewerType=all_reviews"
+
+# İkinci sayfa URL'si
+url_page2 <- "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_arp_d_paging_btm_next_2?ie=UTF8&reviewerType=all_reviews&pageNumber=2"
+
+# Üçüncü sayfa URL'si
+url_page3 <- "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_getr_d_paging_btm_next_3?ie=UTF8&reviewerType=all_reviews&pageNumber=3"
+
+# Dördüncü sayfa URL'si
+url_page4 <- "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_getr_d_paging_btm_next_4?ie=UTF8&reviewerType=all_reviews&pageNumber=4"
+
+# Beşinci sayfa URL'si
+url_page5 <- "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_getr_d_paging_btm_next_5?ie=UTF8&reviewerType=all_reviews&pageNumber=5"
+
+web_page1 <- read_html(url_page1)
+web_page2 <- read_html(url_page2)
+web_page3 <- read_html(url_page3)
+web_page4 <- read_html(url_page4)
+web_page5 <- read_html(url_page5)
+
+# Yorumların XPath'i
+review_xpath <- '//*[contains(concat( " ", @class, " " ), concat( " ", "review-text-content", " " ))]//span'
+
+# İlk sayfa yorumları
+reviews_page1 <- web_page1 %>% html_nodes(xpath = review_xpath) %>% html_text()
+
+# İkinci sayfa yorumları
+reviews_page2 <- web_page2 %>% html_nodes(xpath = review_xpath) %>% html_text()
+
+# Üçüncü sayfa yorumları
+reviews_page3 <- web_page3 %>% html_nodes(xpath = review_xpath) %>% html_text()
+
+# Dördüncü sayfa yorumları
+reviews_page4 <- web_page4 %>% html_nodes(xpath = review_xpath) %>% html_text()
+
+# Beşinci sayfa yorumları
+reviews_page5 <- web_page5 %>% html_nodes(xpath = review_xpath) %>% html_text()
+
+# İlk 10 yorum
+first_10_reviews <- head(reviews_page1, 10)
+
+# İkinci 10 yorum
+second_10_reviews <- head(reviews_page2, 10)
+
+# Üçüncü 10 yorum
+third_10_reviews <- head(reviews_page3, 10)
+
+# Dördüncü 10 yorum
+fourth_10_reviews <- head(reviews_page4, 10)
+
+# Beşinci 10 yorum
+fifth_10_reviews <- head(reviews_page5, 10)
+
+# Toplam 50 yorumu birleştir
+total_reviews <- c(first_10_reviews, second_10_reviews, third_10_reviews, fourth_10_reviews, fifth_10_reviews)
+
+# Toplam yorumları bir veri çerçevesine dönüştür
+reviews_df <- data.frame(Reviews = total_reviews)
+
+
+
