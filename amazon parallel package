@@ -1,0 +1,41 @@
+install.packages("parallel")
+library(parallel)
+library(httr)
+library(rvest)
+
+
+# Amazon ürün sayfasının URL'si
+url <- "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews"
+
+web_page <- read_html(url)
+
+# İşlemcilerin sayısı
+num_cores <- detectCores()
+
+# Paralel işlem 
+scrape_page <- function(url) {
+  web_page <- read_html(url)
+  reviews <- web_page %>% html_nodes(".review-text-content span") %>% html_text()
+  star_ratings <- web_page %>% html_nodes("a.a-color-base, a:link.a-color-base, a:visited.a-color-base") %>% html_text2()
+  return(data.frame(Reviews = reviews, Star_Ratings = star_ratings))
+}
+
+# Paralel işlem yapılacak sayfa URL'leri
+urls <- c(
+  "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews",
+  "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_arp_d_paging_btm_next_2?ie=UTF8&reviewerType=all_reviews&pageNumber=2",
+  "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_getr_d_paging_btm_next_3?ie=UTF8&reviewerType=all_reviews&pageNumber=3",
+  "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_getr_d_paging_btm_next_4?ie=UTF8&reviewerType=all_reviews&pageNumber=4",
+  "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_getr_d_paging_btm_next_5?ie=UTF8&reviewerType=all_reviews&pageNumber=5"
+)
+
+# Paralel işlemle veri çekme
+cluster <- makeCluster(num_cores)
+clusterEvalQ(cluster, {
+  library(rvest)
+})
+reviews_data <- parLapply(cluster, urls, scrape_page)
+stopCluster(cluster)
+
+# Toplam veriyi birleştir
+reviews_df <- do.call(rbind, reviews_data)
