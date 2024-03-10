@@ -76,5 +76,32 @@ total_reviews <- c(first_10_reviews, second_10_reviews, third_10_reviews, fourth
 # Toplam yorumları bir veri çerçevesine dönüştür
 reviews_df <- data.frame(Reviews = total_reviews)
 
+......................................................
+#Ratingsleri çekme
+ratings <- web_page %>% html_nodes("a.a-color-base, a:link.a-color-base, a:visited.a-color-base") %>% html_text2()
+
+# İlk sayfa 
+star_ratings_page1 <- web_page1 %>% html_nodes("a.a-color-base, a:link.a-color-base, a:visited.a-color-base") %>% html_text2()
+
+# İkinci sayfa
+star_ratings_page2 <- web_page2 %>% html_nodes("a.a-color-base, a:link.a-color-base, a:visited.a-color-base") %>% html_text2()
+
+# Yıldız değerlendirmelerini alt alta yazdır
+cat(star_ratings_page2, sep = "\n")
+
+# Üçüncü sayfa 
+star_ratings_page3 <- web_page3 %>% html_nodes("a.a-color-base, a:link.a-color-base, a:visited.a-color-base") %>% html_text2()
+
+# Dördüncü sayfa 
+star_ratings_page4 <- web_page4 %>% html_nodes("a.a-color-base, a:link.a-color-base, a:visited.a-color-base") %>% html_text2()
+
+# Beşinci sayfa 
+star_ratings_page5 <- web_page5 %>% html_nodes("a.a-color-base, a:link.a-color-base, a:visited.a-color-base") %>% html_text2()
+
+# Toplam 50 yıldız değerlendirmesi
+total_star_ratings <- c(star_ratings_page1, star_ratings_page2, star_ratings_page3, star_ratings_page4, star_ratings_page5)
+
+# Toplam yorumları ve yıldız değerlendirmelerini bir veri çerçevesi
+reviews_df <- data.frame(Reviews = total_reviews, Star_Ratings = total_star_ratings)
 
 
