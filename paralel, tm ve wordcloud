@@ -1,0 +1,72 @@
+library(rvest)
+library(httr)
+library(parallel)
+
+# Amazon ürün sayfasının URL'si
+url <- "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews"
+
+# Web sayfasının HTML'si
+web_page <- read_html(url)
+
+# İşlemcilerin sayısını bulma
+num_cores <- detectCores()
+
+# Paralel işlemle web sayfalarının içeriğini kazıma işlevi tanımlama
+scrape_page <- function(url) {
+  web_page <- read_html(url)                                  # Web sayfasının içeriği
+  reviews <- web_page %>% html_nodes(".review-text-content span") %>% html_text()  # Yorumlar
+  star_ratings <- web_page %>% html_nodes("a.a-color-base, a:link.a-color-base, a:visited.a-color-base") %>% html_text2()  # Yıldız değerlendirmeleri
+  return(data.frame(Reviews = reviews, Star_Ratings = star_ratings))  # Yorumları ve yıldız değerlendirmelerini bir veri çerçevesinde döndürme
+}
+
+# Paralel işlemle veri çekme işlemini yapacak paralel işlem kümesi oluşturma
+cluster <- makeCluster(num_cores)
+
+# Paralel işlem kümesine rvest paketini yükleme
+clusterEvalQ(cluster, {
+  library(rvest)
+})
+
+# Paralel işlemle yorumları ve yıldız değerlendirmelerini kazıma
+reviews_data <- parLapply(cluster, urls, scrape_page)
+
+# Paralel işlem kümesini durdurma
+stopCluster(cluster)
+
+# Tüm yorumları içeren veri çerçevesini birleştirme
+reviews_df <- do.call(rbind, reviews_data)
+...................................................................................................
+#Paralel işlemi gerçekleştirip yorumları çektikten sonra medin madenciliği ile kelime bulutu oluşturma adımına geçiyoruz.
+
+# Paketlerin yüklenmesi
+library(wordcloud)  # Kelime bulutları oluşturmak için gerekli paket
+library(wordcloud2) # Kelime bulutları oluşturmak için gerekli paket (wordcloud'ın geliştirilmiş sürümü)
+library(tm)         # Metin madenciliği işlemleri için gerekli paket
+
+
+# Metin belgesi koleksiyonunu oluşturma
+corpus <- VCorpus(VectorSource(reviews_df$Reviews))
+
+# Metin belgelerini ön işleme adımlarından geçirip temizleme
+corpus <- tm_map(corpus, content_transformer(tolower))        # Metni küçük harfe dönüştürme
+corpus <- tm_map(corpus, removeNumbers)                      # Sayıları kaldırma
+corpus <- tm_map(corpus, removePunctuation)                  # Noktalama işaretlerini kaldırma
+corpus <- tm_map(corpus, removeWords, stopwords("en"))        # İngilizce durak kelimelerini kaldırma
+corpus <- tm_map(corpus, stripWhitespace)                    # Boşlukları kaldırma
+
+# Metin belgelerini bir belge terim matrisine dönüştürme
+dtm <- DocumentTermMatrix(corpus)
+
+# BİRİNCİ YOL: Kelime frekanslarını hesaplayarak, sonrasında bir kelime bulutu oluşturma
+word_freq <- colSums(as.matrix(dtm))
+word_freq_df <- as.data.frame(sort(word_freq, decreasing = TRUE))
+colnames(word_freq_df) <- 'freq'
+word_freq_df$word <- rownames(word_freq_df)
+word_freq_df <- word_freq_df[c("word", "freq")]
+
+#İKİNCİ YOL: wordcloud2 paketi ile bir kelime bulutu oluşturma
+wordcloud2(word_freq_df, size = .5)
+custom_palette <- rep("#3498DB", length(unique(words)))
+wordcloud2(word_freq_df, size = .5, color = custom_palette, fontFamily = "Arial")
+
+
