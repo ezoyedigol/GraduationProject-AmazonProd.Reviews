@@ -3,33 +3,32 @@ library(ggplot2)
 library(tidytext)
 library(tm)
 
-# Amazon ??r??n sayfas??n??n URL'si
+# Amazon ürün sayfasının URL'si
 url <- "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews"
 
-# Sayfan??n HTML i??eri??i
+# Sayfanın HTML içeriği
 web_page <- read_html(url)
 
-# Yorumlar??n bulundu??u HTML etiketinin XPath'i 
+# Yorumların bulunduğu HTML etiketinin XPath'i 
 review_xpath <- '//*[contains(concat( " ", @class, " " ), concat( " ", "review-text-content", " " ))]//span'
 
-# Yorumlar?? i??eren HTML etiketleri
+# Yorumları içeren HTML etiketleri
 reviews <- web_page %>% html_nodes(xpath = review_xpath) %>% html_text()
 
 Sys.setlocale("LC_ALL", "Turkish")
 
-
-# ??lk sayfa URL'si
+# İlk sayfa URL'si
 url_page1 <- "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews"
-# ??kinci sayfa URL'si
+# İkinci sayfa URL'si
 url_page2 <- "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_arp_d_paging_btm_next_2?ie=UTF8&reviewerType=all_reviews&pageNumber=2"
-# ??????nc?? sayfa URL'si
+# Üçüncü sayfa URL'si
 url_page3 <- "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_getr_d_paging_btm_next_3?ie=UTF8&reviewerType=all_reviews&pageNumber=3"
-# D??rd??nc?? sayfa URL'si
+# Dördüncü sayfa URL'si
 url_page4 <-  "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_getr_d_paging_btm_next_4?ie=UTF8&reviewerType=all_reviews&pageNumber=4"
 
-# Be??inci sayfa URL'si
+# Beşinci sayfa URL'si
 url_page5 <- "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_getr_d_paging_btm_next_5?ie=UTF8&reviewerType=all_reviews&pageNumber=5"
-# Alt??nc?? sayfa URL'si
+# Altıncı sayfa URL'si
 url_page6 <- "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_getr_d_paging_btm_next_6?ie=UTF8&reviewerType=all_reviews&pageNumber=6"
 
 #Yedinci sayfa URL'si
@@ -43,106 +42,106 @@ web_page5 <- read_html(url_page5)
 web_page6 <- read_html(url_page6)
 web_page7 <- read_html(url_page7)
 
-# Yorumlar??n XPath'i
+# Yorumların XPath'i
 review_xpath <- '//*[contains(concat( " ", @class, " " ), concat( " ", "review-text-content", " " ))]//span'
 
-# ??lk sayfa yorumlar??
+# İlk sayfa yorumları
 reviews_page1 <- web_page1 %>% html_nodes(xpath = review_xpath) %>% html_text()
 
-# ??kinci sayfa yorumlar??
+# İkinci sayfa yorumları
 reviews_page2 <- web_page2 %>% html_nodes(xpath = review_xpath) %>% html_text()
 
-# ??????nc?? sayfa yorumlar??
+# Üçüncü sayfa yorumları
 reviews_page3 <- web_page3 %>% html_nodes(xpath = review_xpath) %>% html_text()
 
-# D??rd??nc?? sayfa yorumlar??
+# Dördüncü sayfa yorumları
 reviews_page4 <- web_page4 %>% html_nodes(xpath = review_xpath) %>% html_text()
 
-# Be??inci sayfa yorumlar??
+# Beşinci sayfa yorumları
 reviews_page5 <- web_page5 %>% html_nodes(xpath = review_xpath) %>% html_text()
 
-#Alt??nc?? sayfa yorumlar?? 
+#Altıncı sayfa yorumları 
 reviews_page6 <- web_page6 %>% html_nodes(xpath = review_xpath) %>% html_text()
 
-#Yedinci sayfa yorumlar??
+#Yedinci sayfa yorumları
 reviews_page7 <- web_page7 %>% html_nodes(xpath = review_xpath) %>% html_text()
 
-# ??lk 10 yorum
+# İlk 10 yorum
 first_10_reviews <- head(reviews_page1, 10)
 
-# ??kinci 10 yorum
+# İkinci 10 yorum
 second_10_reviews <- head(reviews_page2, 10)
 
-# ??????nc?? 10 yorum
+# Üçüncü 10 yorum
 third_10_reviews <- head(reviews_page3, 10)
 
-# D??rd??nc?? 10 yorum
+# Dördüncü 10 yorum
 fourth_10_reviews <- head(reviews_page4, 10)
 
-# Be??inci 10 yorum
+# Beşinci 10 yorum
 fifth_10_reviews <- head(reviews_page5, 10)
 
-#Alt??nc?? 10 yorum
+#Altıncı 10 yorum
 sixth_10_reviews <- head(reviews_page6, 10)
 
 #Yedinci 10 yorum
 seventh_10_reviews <- head(reviews_page7, 10)
 
-# Toplam 50 yorumu birle??tir
+# Toplam 50 yorumu birleştir
 total_reviews <- c(first_10_reviews, second_10_reviews, third_10_reviews, fourth_10_reviews, fifth_10_reviews, sixth_10_reviews, seventh_10_reviews)
 
-# Toplam yorumlar?? bir veri ??er??evesine d??n????t??r
+# Toplam yorumları bir veri çerçevesine dönüştür
 reviews_df <- data.frame(Reviews = total_reviews)
 
-#Ratingsleri ??ekme
+#Ratingsleri çekme
 ratings <- web_page %>% html_nodes("a.a-color-base, a:link.a-color-base, a:visited.a-color-base") %>% html_text2()
 
-# ??lk sayfa 
+# İlk sayfa 
 star_ratings_page1 <- web_page1 %>% html_nodes("a.a-color-base, a:link.a-color-base, a:visited.a-color-base") %>% html_text2()
 
-# ??kinci sayfa
+# İkinci sayfa
 star_ratings_page2 <- web_page2 %>% html_nodes("a.a-color-base, a:link.a-color-base, a:visited.a-color-base") %>% html_text2()
 
-# Y??ld??z de??erlendirmelerini alt alta yazd??r
+# Yıldız değerlendirmelerini alt alta yazdır
 cat(star_ratings_page2, sep = "\n")
 
-# ??????nc?? sayfa 
+# Üçüncü sayfa 
 star_ratings_page3 <- web_page3 %>% html_nodes("a.a-color-base, a:link.a-color-base, a:visited.a-color-base") %>% html_text2()
 
-# D??rd??nc?? sayfa 
+# Dördüncü sayfa 
 star_ratings_page4 <- web_page4 %>% html_nodes("a.a-color-base, a:link.a-color-base, a:visited.a-color-base") %>% html_text2()
 
-# Be??inci sayfa 
+# Beşinci sayfa 
 star_ratings_page5 <- web_page5 %>% html_nodes("a.a-color-base, a:link.a-color-base, a:visited.a-color-base") %>% html_text2()
 
-#Alt??nc?? Sayfa
+#Altıncı Sayfa
 star_ratings_page6 <- web_page6 %>% html_nodes("a.a-color-base, a:link.a-color-base, a:visited.a-color-base") %>% html_text2()
 
 #Yedinci Sayfa
 star_ratings_page7 <- web_page7 %>% html_nodes("a.a-color-base, a:link.a-color-base, a:visited.a-color-base") %>% html_text2()
 
-# Toplam 50 y??ld??z de??erlendirmesi
+# Toplam 50 yıldız değerlendirmesi
 total_star_ratings <- c(star_ratings_page1, star_ratings_page2, star_ratings_page3, star_ratings_page4, star_ratings_page5, star_ratings_page6, star_ratings_page7)
 
-# Toplam yorumlar?? ve y??ld??z de??erlendirmelerini bir veri ??er??evesi
+# Toplam yorumlar ve yıldız değerlendirmelerini bir veri çerçevesi
 reviews_df <- data.frame(Reviews = total_reviews, Star_Ratings = total_star_ratings)
 
 
 
-#PARALEL PAKET ??LE VER?? KAZIMA
+#PARALEL PAKET İLE VERİ KAZIMA
 install.packages("parallel")
 library(parallel)
 library(httr)
 library(rvest)
 
-# Amazon ??r??n sayfas??n??n URL'si
+# Amazon ürün sayfasının URL'si
 url <- "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews"
 web_page <- read_html(url)
 
-# ????lemcilerin say??s??
+# İşlemcilerin sayısı
 num_cores <- detectCores()
 
-# Paralel i??lem 
+# Paralel işlem 
 scrape_page <- function(url) {
   web_page <- read_html(url)
   reviews <- html_text(web_page %>% html_nodes(".review-text-content span"))
@@ -150,7 +149,7 @@ scrape_page <- function(url) {
   return(data.frame(Reviews = reviews, Star_Ratings = star_ratings))
 }
 
-# Paralel i??lem yap??lacak sayfa URL'leri
+# Paralel işlem yapılacak sayfa URL'leri
 urls <- c(
   "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews",
   "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_arp_d_paging_btm_next_2?ie=UTF8&reviewerType=all_reviews&pageNumber=2",
@@ -161,7 +160,7 @@ urls <- c(
   "https://www.amazon.com.tr/Stanley-Klasik-Vakumlu-Termos-1-9/product-reviews/B07PBN67YJ/ref=cm_cr_getr_d_paging_btm_next_7?ie=UTF8&reviewerType=all_reviews&pageNumber=7"
 )
 
-# Paralel i??lemle veri ??ekme
+# Paralel işlemle veri çekme
 cluster <- makeCluster(num_cores)
 clusterEvalQ(cluster, {
   library(rvest)
@@ -169,44 +168,44 @@ clusterEvalQ(cluster, {
 reviews_data <- parLapply(cluster, urls, scrape_page)
 stopCluster(cluster)
 
-# Toplam veriyi birle??tir
+# Toplam veriyi birleştir
 reviews_df <- do.call(rbind, reviews_data)
 
 
 
-#WORDCLOUD PAKET?? ??LE KEL??ME BULUTU OLU??TURMA
-# Paketlerin y??klenmesi
-library(wordcloud)  # Kelime bulutlar?? olu??turmak i??in gerekli paket
-library(wordcloud2) # Kelime bulutlar?? olu??turmak i??in gerekli paket (wordcloud'??n geli??tirilmi?? s??r??m??)
-library(tm)         # Metin madencili??i i??lemleri i??in gerekli paket
+#WORDCLOUD PAKETİ İLE KELİME BULUTU OLUŞTURMA
+# Paketlerin yüklenmesi
+library(wordcloud)  # Kelime bulutları oluşturmak için gerekli paket
+library(wordcloud2) # Kelime bulutları oluşturmak için gerekli paket (wordcloud'ın geliştirilmiş sürümü)
+library(tm)         # Metin madenciliği işlemleri için gerekli paket
 
 
-# Metin belgesi koleksiyonunu olu??turma
+# Metin belgesi koleksiyonunu oluşturma
 corpus <- VCorpus(VectorSource(reviews_df$Reviews))
 
-# Metin belgelerini ??n i??leme ad??mlar??ndan ge??irip temizleme
-corpus <- tm_map(corpus, content_transformer(tolower))        # Metni k??????k harfe d??n????t??rme
-corpus <- tm_map(corpus, removeNumbers)                      # Say??lar?? kald??rma
-corpus <- tm_map(corpus, removePunctuation)                  # Noktalama i??aretlerini kald??rma
-corpus <- tm_map(corpus, removeWords, stopwords("en"))        # ??ngilizce durak kelimelerini kald??rma
-corpus <- tm_map(corpus, stripWhitespace)                    # Bo??luklar?? kald??rma
+# Metin belgelerini ön işleme adımlarından geçirip temizleme
+corpus <- tm_map(corpus, content_transformer(tolower))        # Metni küçük harfe dönüştürme
+corpus <- tm_map(corpus, removeNumbers)                      # Sayıları kaldırma
+corpus <- tm_map(corpus, removePunctuation)                  # Noktalama işaretlerini kaldırma
+corpus <- tm_map(corpus, removeWords, stopwords("en"))        # İngilizce durak kelimelerini kaldırma
+corpus <- tm_map(corpus, stripWhitespace)                    # Boşlukları kaldırma
 
-# Metin belgesini ??n i??leme ad??mlar??ndan ge??irme
-corpus <- tm_map(corpus, removeWords, c("??r??n")) # "??r??n" kelimesini kald??rma
+# Metin belgelerini ön işleme adımlarından geçirme
+corpus <- tm_map(corpus, removeWords, c("ürün")) # "ürün" kelimesini kaldırma
 corpus <- tm_map(corpus, removeWords, c("gibi"))
 corpus <- tm_map(corpus, removeWords, c("bir"))
 
-# Metin belgelerini bir belge terim matrisine d??n????t??rme
+# Metin belgelerini bir belge terim matrisine dönüştürme
 dtm <- DocumentTermMatrix(corpus)
 
-# B??R??NC?? YOL: Kelime frekanslar??n?? hesaplayarak, sonras??nda bir kelime bulutu olu??turma
+# BİRİNCİ YOL: Kelime frekanslarını hesaplayarak, sonrasında bir kelime bulutu oluşturma
 word_freq <- colSums(as.matrix(dtm))
 word_freq_df <- as.data.frame(sort(word_freq, decreasing = TRUE))
 colnames(word_freq_df) <- 'freq'
 word_freq_df$word <- rownames(word_freq_df)
 word_freq_df <- word_freq_df[c("word", "freq")]
 
-#??K??NC?? YOL: wordcloud2 paketi ile bir kelime bulutu olu??turma
+#İKİNCİ YOL: wordcloud2 paketi ile bir kelime bulutu oluşturma
 wordcloud2(word_freq_df, size = .5)
 custom_palette <- rep("#3498DB", length(unique(words)))
 wordcloud2(word_freq_df, size = .5, color = custom_palette, fontFamily = "Arial")
